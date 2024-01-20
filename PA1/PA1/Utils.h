@@ -5,7 +5,7 @@
 
 #define INPUTFILE "FitbitData.csv"
 #define CLEANFILE "cleaned.csv"
-#define OUTFILE "output.txt"
+#define OUTFILE "Results.csv"
 
 #include<stdio.h>
 #include<string.h>
@@ -45,16 +45,21 @@ typedef struct cleanedFileToken {
 	char target[6];
 	Fields fieldOrder[8];
 	char outputFile[20];
+	int numLines;
 
 }CleanedFileToken;
 
-Fields getFieldFromString(char* str);
+typedef struct sleepRange {
+	char begin[9];
+	char end[9];
+	int level;
+}SleepRange;
 
-//void clearBuffer(char* buffer, int size);
+Fields getFieldFromString(char* str);
 
 CleanedFileToken cleanCsv(char* inputFile);
 
-FitbitData* ingestData(CleanedFileToken token, FitbitData* dataStorage);
+CleanedFileToken ingestData(CleanedFileToken token, FitbitData* dataStorage);
 
 #endif // !UTILS_H
 

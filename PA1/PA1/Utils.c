@@ -1,15 +1,5 @@
 #include "Utils.h"
 
-//void clearBuffer(char* buffer, int size) {
-//	int i;
-//
-//	for (i = 0; i < size; i++) {
-//		buffer[i] = '\0';
-//	}
-//}
-
-
-
 CleanedFileToken cleanCsv(char* inputFile) {
 
 	CleanedFileToken token;
@@ -187,7 +177,7 @@ Fields getFieldFromString(char* str) {
 	}
 }
 
-FitbitData* ingestData(CleanedFileToken token, FitbitData* dataStorage) {
+CleanedFileToken ingestData(CleanedFileToken token, FitbitData* dataStorage) {
 
 	char buffer[200] = "\0";
 	int i = 0;
@@ -230,6 +220,7 @@ FitbitData* ingestData(CleanedFileToken token, FitbitData* dataStorage) {
 			}
 		}
 		fclose(inFile);
+		token.numLines = i;
 		printf("Ingested lines: %d\n", i);
 	}
 	else {
@@ -238,5 +229,5 @@ FitbitData* ingestData(CleanedFileToken token, FitbitData* dataStorage) {
 
 	
 
-	return dataStorage;
+	return token;
 }

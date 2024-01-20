@@ -3,29 +3,46 @@
 
 int main() {
 
-
-	/*tests*/
-	int i;
-
-	char input[] = INPUTFILE;
-
-	CleanedFileToken token = cleanCsv(input);
-	printf("output file: %s\n", token.outputFile);
-	printf("target: %s\n", token.target);
-	
-
-	printf("Field order: ");
-	for (i = 0; i < 8; i++) {
-		printf("%d,", token.fieldOrder[i]);
-	}
-	printf("\n");
-
+	/*declare main array for structs*/
 	FitbitData dataStorage[1480];
 
-	ingestData(token, dataStorage);
+	/*clean the original data and write to clean file*/
+	CleanedFileToken token = cleanCsv(INPUTFILE);
+	printf("output file: %s\n", token.outputFile);
+	printf("target: %s\n", token.target);
+
+	/*Ingest data from cleaned file to array and set token*/
+	token = ingestData(token, dataStorage);
+
+	/*calculate Totals and write output file*/
+	compTotals(token, dataStorage);
+
+
+	/*tests*/
+
+	//int i;
+
+	//char input[] = INPUTFILE;
+
+	//CleanedFileToken token = cleanCsv(input);
+	//printf("output file: %s\n", token.outputFile);
+	//printf("target: %s\n", token.target);
+	//
+
+	//printf("Field order: ");
+	//for (i = 0; i < 8; i++) {
+	//	printf("%d,", token.fieldOrder[i]);
+	//}
+	//printf("\n");
+
+	//FitbitData dataStorage[1480];
+
+	//token = ingestData(token, dataStorage);
+
+	//compTotals(token, dataStorage);
 
 	/*
-	har patient[10];
+	char patient[10];
 	char minute[9];
 	double calories;
 	double distance;
@@ -34,7 +51,7 @@ int main() {
 	unsigned int steps;
 	Sleep sleepLevel;
 	*/
-	for (i = 0; i < 10; i++) {
+	/*for (i = 638; i < 644; i++) {
 		printf("----------\n");
 		printf("Patient: %s\n", dataStorage[i].patient);
 		printf("minute: %s\n", dataStorage[i].minute);
@@ -45,7 +62,7 @@ int main() {
 		printf("steps: %d\n", dataStorage[i].steps);
 		printf("sleep level: %d\n", dataStorage[i].sleepLevel);
 		printf("----------\n");
-	}
+	}*/
 	
 
 

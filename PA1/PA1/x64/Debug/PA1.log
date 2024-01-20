@@ -1,4 +1,4 @@
-﻿  Utils.c
-  main.c
-  Generating Code...
+﻿  tasks.c
+C:\Users\ZU420\source\repos\122\PA1\PA1\tasks.c(54,29): warning C4018: '>': signed/unsigned mismatch
+C:\Users\ZU420\source\repos\122\PA1\PA1\tasks.c(63,19): warning C4047: '!=': 'int' differs in levels of indirection from 'void *'
   PA1.vcxproj -> C:\Users\ZU420\source\repos\122\PA1\x64\Debug\PA1.exe

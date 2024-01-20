@@ -136,7 +136,9 @@
     <ClInclude Include="Utils.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="cleaned.csv" />
     <None Include="FitbitData.csv" />
+    <None Include="Results.csv" />
     <None Include="test.csv" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
