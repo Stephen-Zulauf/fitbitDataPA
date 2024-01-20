@@ -26,6 +26,7 @@ CleanedFileToken cleanCsv(char* inputFile) {
 
 		char buffer[200] = "\0";
 		char subBuffer[100] = "\0";
+		char lastTime[20] = "\0";
 
 		/*read first two lines and enter data into cleaned struct*/
 
@@ -82,39 +83,52 @@ CleanedFileToken cleanCsv(char* inputFile) {
 			start = buffer;
 			strtok(buffer, ",");
 
-			//check target field is correct
+			//check if target field is correct.
 			if (strcmp(start, token.target) == 0) {
-				while (start != NULL) {
 
-					//copy field into subBuffer
-					strcpy(subBuffer, start);
+				//check time field for dupe
+				start = strtok(NULL, ",");
 
-					//check if missing field write -1 to field)
-					if (*subBuffer == '#') {
-						fputs("-1", outFile);
-						fputs(",", outFile);
-						start = strtok(NULL, ",");
-					}
-					else {
-						//eliminate new lines
-						char* newLine = strchr(subBuffer, '\n');
-						if (newLine != NULL) {
-							*newLine = '\0';
+				if (strcmp(start, lastTime) != 0) {
+					strcpy(lastTime, start);
+
+					//write target
+					fputs(token.target, outFile);
+					fputs(",", outFile);
+
+					while (start != NULL) {
+
+						//copy field into subBuffer
+						strcpy(subBuffer, start);
+
+						//check if missing field write -1 to field)
+						if (*subBuffer == '#') {
+							fputs("-1", outFile);
+							fputs(",", outFile);
+							start = strtok(NULL, ",");
+						}
+						else {
+							//eliminate new lines
+							char* newLine = strchr(subBuffer, '\n');
+							if (newLine != NULL) {
+								*newLine = '\0';
+							}
+
+							//write field to cleaned line
+							fputs(subBuffer, outFile);
+							fputs(",", outFile);
+							start = strtok(NULL, ",");
 						}
 
-						//write field to cleaned line
-						fputs(subBuffer, outFile);
-						fputs(",", outFile);
-						start = strtok(NULL, ",");
 					}
-					
+					fputs("\n", outFile);
+
 				}
-				fputs("\n", outFile);
+
 			}
 			
 		}
-		//terminate cleaned file
-		//fputs("\0", outFile);
+
 		fclose(inFile);
 		fclose(outFile);
 		

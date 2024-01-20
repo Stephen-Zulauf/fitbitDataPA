@@ -34,7 +34,7 @@ int main() {
 	unsigned int steps;
 	Sleep sleepLevel;
 	*/
-	for (i = 100; i < 300; i++) {
+	for (i = 0; i < 10; i++) {
 		printf("----------\n");
 		printf("Patient: %s\n", dataStorage[i].patient);
 		printf("minute: %s\n", dataStorage[i].minute);
