@@ -3,6 +3,10 @@
 
 #define _CRT_SECURE_NO_WARNINGS
 
+#define INPUTFILE "FitbitData.csv"
+#define CLEANFILE "cleaned.csv"
+#define OUTFILE "output.txt"
+
 #include<stdio.h>
 #include<string.h>
 #include<stdlib.h>
@@ -48,7 +52,7 @@ Fields getFieldFromString(char* str);
 
 CleanedFileToken cleanCsv(char* inputFile);
 
-
+FitbitData* ingestData(CleanedFileToken token, FitbitData* dataStorage);
 
 #endif // !UTILS_H
 

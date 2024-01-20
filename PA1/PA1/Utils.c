@@ -5,23 +5,23 @@ CleanedFileToken cleanCsv(char* inputFile) {
 	CleanedFileToken token;
 
 	//assign cleaned file path
-	char cleanedName[15] = "cleaned.csv";
-	strcpy(token.outputFile, cleanedName);
+	strcpy(token.outputFile, CLEANFILE);
 
 	FILE* inFile = fopen(inputFile, "r");
-	FILE* outFile = fopen(cleanedName, "w");
+	FILE* outFile = fopen(CLEANFILE, "w");
 
 	if (inFile != NULL && outFile != NULL) {
-		printf("created %s\n", cleanedName);
+		printf("created %s\n", CLEANFILE);
 		printf("opened %s\n", inputFile);
 
 		char buffer[100];
-		
-		//read first two lines and enter data into cleaned struct
+		char subBuffer[100];
+
+		/*read first two lines and enter data into cleaned struct*/
+
 		//get target ID
 		fgets(buffer, 100, inFile);
 		char* start = buffer;
-		char* end = NULL;
 
 		start = strchr(buffer, ',') + 1;
 		strtok(start, ",");
@@ -34,12 +34,84 @@ CleanedFileToken cleanCsv(char* inputFile) {
 		start = buffer;
 		strtok(start, ",");
 		while (start != NULL) {
-			printf("%s\n", start);
+			//printf("%s\n", start);
 			token.fieldOrder[i] = getFieldFromString(start);
 			i++;
 			start = strtok(NULL, ",");
 		}
 
+		/*begin copy*/
+
+		//get each line into buffer
+		while (fgets(buffer, 100, inFile) != NULL) {
+
+			start = buffer;
+
+			//check for missing feilds and replace with #
+			while (*start != '\0') {
+				if (*start == ',' && *(start + 1) == ',') {
+					strcpy(subBuffer, start + 1);
+					*(start + 1) = '#';
+					*(start + 2) = ',';
+					start += 3;
+					strcpy(start, subBuffer);
+
+				}else if (*start == ',' && *(start + 1) == '\n') {
+					strcpy(subBuffer, start + 1);
+					*(start + 1) = '#';
+					start += 2;
+					strcpy(start, subBuffer);
+
+				}
+				else {
+					start += 1;
+				}
+			}
+			
+			//reset start of buffer and toke it
+			start = buffer;
+			strtok(buffer, ",");
+
+			//check target field is correct
+			if (strcmp(start, token.target) == 0) {
+				while (start != NULL) {
+
+					//copy field into subBuffer
+					strcpy(subBuffer, start);
+					//printf("subBuf: %s\n", subBuffer);
+
+					//check if missing field write -1 to field)
+					if (*subBuffer == '#') {
+						fputs("-1", outFile);
+						fputs(",", outFile);
+						start = strtok(NULL, ",");
+					}
+					else {
+						//eliminate new lines
+						char* newLine = strchr(subBuffer, '\n');
+						if (newLine != NULL) {
+							*newLine = '\0';
+						}
+
+						//write field to cleaned line
+						fputs(subBuffer, outFile);
+						fputs(",", outFile);
+						start = strtok(NULL, ",");
+					}
+
+					
+				}
+				fputs("\n", outFile);
+			}
+			
+
+		}
+		//terminate cleaned file
+		fputs("\0", outFile);
+		
+	}
+	else {
+		printf("ERROR CleanCSV- couldnt open either input or output file\n");
 	}
 
 	return token;
@@ -90,4 +162,46 @@ Fields getFieldFromString(char* str) {
 		printf("ERROR getFieldFromString-could not identify enum type\n");
 		return 8;
 	}
+}
+
+FitbitData* ingestData(CleanedFileToken token, FitbitData* dataStorage) {
+
+	char buffer[100];
+	int i = 0;
+	char* temp;
+
+	FILE* inFile = fopen(token.outputFile, "r");
+
+	while (fgets(buffer, 100, inFile) != NULL) {
+		char* start = buffer;
+		strtok(buffer, ",");
+
+		strcpy(dataStorage[i].patient, start);
+		printf("%s\n", start);
+		start = strtok(NULL, ",");
+
+		strcpy(dataStorage[i].minute, start);
+		start = strtok(NULL, ",");
+
+		dataStorage[i].calories = strtod(start, &temp);
+		start = strtok(NULL, ",");
+
+		dataStorage[i].distance = strtod(start, &temp);
+		start = strtok(NULL, ",");
+
+		dataStorage[i].floors = atoi(start);
+		start = strtok(NULL, ",");
+
+		dataStorage[i].heartRate = atoi(start);
+		start = strtok(NULL, ",");
+
+		dataStorage[i].steps = atoi(start);
+		start = strtok(NULL, ",");
+
+		dataStorage[i].sleepLevel = atoi(start);
+		
+		i++;
+	}
+
+	return dataStorage;
 }

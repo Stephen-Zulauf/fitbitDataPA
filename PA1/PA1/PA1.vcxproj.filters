@@ -37,5 +37,8 @@
     <None Include="FitbitData.csv">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="test.csv">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -7,7 +7,7 @@ int main() {
 	/*tests*/
 	int i;
 
-	char input[] = "FitbitData.csv";
+	char input[] = INPUTFILE;
 
 	CleanedFileToken token = cleanCsv(input);
 
@@ -19,6 +19,10 @@ int main() {
 		printf("%d,", token.fieldOrder[i]);
 	}
 	printf("\n");
+
+	FitbitData dataStorage[1480];
+
+	ingestData(token, dataStorage);
 
 	return 0;
 }
