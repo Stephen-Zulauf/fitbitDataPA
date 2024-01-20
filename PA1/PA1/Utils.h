@@ -50,6 +50,8 @@ typedef struct cleanedFileToken {
 
 Fields getFieldFromString(char* str);
 
+//void clearBuffer(char* buffer, int size);
+
 CleanedFileToken cleanCsv(char* inputFile);
 
 FitbitData* ingestData(CleanedFileToken token, FitbitData* dataStorage);

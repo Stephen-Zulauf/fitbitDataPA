@@ -1,5 +1,15 @@
 #include "Utils.h"
 
+//void clearBuffer(char* buffer, int size) {
+//	int i;
+//
+//	for (i = 0; i < size; i++) {
+//		buffer[i] = '\0';
+//	}
+//}
+
+
+
 CleanedFileToken cleanCsv(char* inputFile) {
 
 	CleanedFileToken token;
@@ -14,13 +24,13 @@ CleanedFileToken cleanCsv(char* inputFile) {
 		printf("created %s\n", CLEANFILE);
 		printf("opened %s\n", inputFile);
 
-		char buffer[100];
-		char subBuffer[100];
+		char buffer[200] = "\0";
+		char subBuffer[100] = "\0";
 
 		/*read first two lines and enter data into cleaned struct*/
 
 		//get target ID
-		fgets(buffer, 100, inFile);
+		fgets(buffer, 150, inFile);
 		char* start = buffer;
 
 		start = strchr(buffer, ',') + 1;
@@ -28,8 +38,8 @@ CleanedFileToken cleanCsv(char* inputFile) {
 		strcpy(token.target, start);
 		
 		//get field order enums
-		fgets(buffer, 100, inFile);
-
+		fgets(buffer, 150, inFile);
+		
 		int i = 0;
 		start = buffer;
 		strtok(start, ",");
@@ -43,7 +53,7 @@ CleanedFileToken cleanCsv(char* inputFile) {
 		/*begin copy*/
 
 		//get each line into buffer
-		while (fgets(buffer, 100, inFile) != NULL) {
+		while (fgets(buffer, 150, inFile) != NULL) {
 
 			start = buffer;
 
@@ -78,7 +88,6 @@ CleanedFileToken cleanCsv(char* inputFile) {
 
 					//copy field into subBuffer
 					strcpy(subBuffer, start);
-					//printf("subBuf: %s\n", subBuffer);
 
 					//check if missing field write -1 to field)
 					if (*subBuffer == '#') {
@@ -98,16 +107,16 @@ CleanedFileToken cleanCsv(char* inputFile) {
 						fputs(",", outFile);
 						start = strtok(NULL, ",");
 					}
-
 					
 				}
 				fputs("\n", outFile);
 			}
 			
-
 		}
 		//terminate cleaned file
-		fputs("\0", outFile);
+		//fputs("\0", outFile);
+		fclose(inFile);
+		fclose(outFile);
 		
 	}
 	else {
@@ -166,42 +175,54 @@ Fields getFieldFromString(char* str) {
 
 FitbitData* ingestData(CleanedFileToken token, FitbitData* dataStorage) {
 
-	char buffer[100];
+	char buffer[200] = "\0";
 	int i = 0;
 	char* temp;
 
 	FILE* inFile = fopen(token.outputFile, "r");
 
-	while (fgets(buffer, 100, inFile) != NULL) {
-		char* start = buffer;
-		strtok(buffer, ",");
+	if (inFile != NULL) {
+		while (fgets(buffer, 150, inFile) != NULL) {
+			char* start = buffer;
 
-		strcpy(dataStorage[i].patient, start);
-		printf("%s\n", start);
-		start = strtok(NULL, ",");
+			//check if reading null line before EOF
+			if (start != NULL) {
+				strtok(buffer, ",");
 
-		strcpy(dataStorage[i].minute, start);
-		start = strtok(NULL, ",");
+				strcpy(dataStorage[i].patient, start);
+				start = strtok(NULL, ",");
 
-		dataStorage[i].calories = strtod(start, &temp);
-		start = strtok(NULL, ",");
+				strcpy(dataStorage[i].minute, start);
+				start = strtok(NULL, ",");
 
-		dataStorage[i].distance = strtod(start, &temp);
-		start = strtok(NULL, ",");
+				dataStorage[i].calories = strtod(start, &temp);
+				start = strtok(NULL, ",");
 
-		dataStorage[i].floors = atoi(start);
-		start = strtok(NULL, ",");
+				dataStorage[i].distance = strtod(start, &temp);
+				start = strtok(NULL, ",");
 
-		dataStorage[i].heartRate = atoi(start);
-		start = strtok(NULL, ",");
+				dataStorage[i].floors = atoi(start);
+				start = strtok(NULL, ",");
 
-		dataStorage[i].steps = atoi(start);
-		start = strtok(NULL, ",");
+				dataStorage[i].heartRate = atoi(start);
+				start = strtok(NULL, ",");
 
-		dataStorage[i].sleepLevel = atoi(start);
-		
-		i++;
+				dataStorage[i].steps = atoi(start);
+				start = strtok(NULL, ",");
+
+				dataStorage[i].sleepLevel = atoi(start);
+
+				i++;
+			}
+		}
+		fclose(inFile);
+		printf("Ingested lines: %d\n", i);
 	}
+	else {
+		printf("ERROR Ingest: could not open cleaned csv file\n");
+	}
+
+	
 
 	return dataStorage;
 }
